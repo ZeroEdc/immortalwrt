@@ -5,7 +5,7 @@
 ## 1. 项目基础信息
 
 * **目标设备**：京东云无线宝亚瑟 (JDC AX1800 Pro / RE-SS-01，256GB eMMC 版)
-* **硬件平台代码**：`CONFIG_TARGET_ipq60xx_generic_DEVICE_jdcloud_re-ss-01=y`
+* **硬件平台代码**：`CONFIG_TARGET_qualcommax_ipq60xx_DEVICE_jdcloud_re-ss-01=y`
 * **管理网段**：**`192.168.8.1`** (默认无密码，已在 Actions 编译管道中自动完成修改，防与光猫 IP 冲突)
 * **软件源分支**：ImmortalWrt `master` 主分支
 * **定制功能配方**：Docker 容器平台、Samba4 局域网共享、AdGuardHome 全屋广告过滤、Diskman 磁盘管理与分区挂载、QuickStart 新手大盘、Argon & Material 双颜值主题。
