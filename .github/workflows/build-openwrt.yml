@@ -78,7 +78,16 @@ jobs:
       id: organize
       if: steps.compile.outputs.status == 'success' && !cancelled()
       run: |
-        cd openwrt/bin/targets/ipq60xx/generic
+        echo "正在寻找编译生成的固件目录..."
+        FIRMWARE_DIR=$(find openwrt/bin/targets/ -type f -name "*.bin" -exec dirname {} \; | sort -u | head -n 1)
+        if [ -z "$FIRMWARE_DIR" ]; then
+          echo "❌ 错误：未在 openwrt/bin/targets/ 下找到任何编译生成的 .bin 固件！"
+          echo "当前 bin 目录结构为："
+          find openwrt/bin/ -maxdepth 4
+          exit 1
+        fi
+        echo "已找到固件目录: $FIRMWARE_DIR"
+        cd "$FIRMWARE_DIR"
         rm -rf packages
         echo "FIRMWARE=$PWD" >> $GITHUB_ENV
         echo "status=success" >> $GITHUB_OUTPUT
