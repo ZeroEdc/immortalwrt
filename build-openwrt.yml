@@ -74,7 +74,12 @@ jobs:
       id: package
       run: |
         cd openwrt
-        make download -j8
+        # 提前多线程下载主机编译工具源码包
+        make tools/download -j$(nproc)
+        # 提前多线程下载交叉编译器源码包
+        make toolchain/download -j$(nproc)
+        # 多线程下载普通软件包源码包
+        make download -j$(nproc)
         find dl -size -1k -exec ls -l {} \;
         find dl -size -1k -exec rm -f {} \;
 
@@ -83,7 +88,8 @@ jobs:
       run: |
         cd openwrt
         echo -e "$(nproc) thread compile"
-        make -j$(nproc) || make -j1 || make -j1 V=s
+        # 使用满线程编译，失败则直接切换到单线程详细日志输出以方便定位问题
+        make -j$(nproc) || make -j1 V=s
         echo "status=success" >> $GITHUB_OUTPUT
         grep -i 'CONFIG_TARGET' .config
 
