@@ -74,10 +74,6 @@ jobs:
       id: package
       run: |
         cd openwrt
-        # 提前多线程下载主机编译工具源码包
-        make tools/download -j$(nproc)
-        # 提前多线程下载交叉编译器源码包
-        make toolchain/download -j$(nproc)
         # 多线程下载普通软件包源码包
         make download -j$(nproc)
         find dl -size -1k -exec ls -l {} \;
