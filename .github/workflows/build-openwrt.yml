@@ -45,6 +45,17 @@ jobs:
         git clone $REPO_URL -b $REPO_BRANCH openwrt
         ln -sf /workdir/openwrt $GITHUB_WORKSPACE/openwrt
 
+    - name: Cache OpenWrt build
+      uses: actions/cache@v4
+      with:
+        path: |
+          openwrt/dl
+          openwrt/staging_dir/host
+          openwrt/staging_dir/toolchain
+        key: ${{ runner.os }}-openwrt-cache-${{ hashFiles('seed.config') }}
+        restore-keys: |
+          ${{ runner.os }}-openwrt-cache-
+
     - name: Update & Install feeds
       run: |
         cd openwrt
