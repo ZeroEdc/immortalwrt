@@ -6,7 +6,7 @@ on:
 
 env:
   REPO_URL: https://github.com/immortalwrt/immortalwrt
-  REPO_BRANCH: master
+  REPO_BRANCH: openwrt-25.12
   FEEDS_CONF: feeds.conf.default
   CONFIG_FILE: seed.config
   DIY_P1_SH: diy-part1.sh
@@ -17,7 +17,7 @@ env:
 
 jobs:
   build:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     permissions:
       contents: write
 
@@ -41,7 +41,7 @@ jobs:
       working-directory: /workdir
       run: |
         df -hT $PWD
-        git clone $REPO_URL -b $REPO_BRANCH openwrt
+        git clone $REPO_URL -b $REPO_BRANCH --depth 1 --single-branch openwrt
         ln -sf /workdir/openwrt $GITHUB_WORKSPACE/openwrt
 
     - name: Cache OpenWrt build
@@ -51,16 +51,18 @@ jobs:
           openwrt/dl
           openwrt/staging_dir/host
           openwrt/staging_dir/toolchain
-        key: ${{ runner.os }}-openwrt-cache-${{ hashFiles('seed.config') }}-${{ github.run_id }}
+        key: ${{ runner.os }}-${{ env.REPO_BRANCH }}-openwrt-cache-${{ hashFiles('seed.config') }}-${{ github.run_id }}
         restore-keys: |
-          ${{ runner.os }}-openwrt-cache-${{ hashFiles('seed.config') }}-
-          ${{ runner.os }}-openwrt-cache-
+          ${{ runner.os }}-${{ env.REPO_BRANCH }}-openwrt-cache-${{ hashFiles('seed.config') }}-
+          ${{ runner.os }}-${{ env.REPO_BRANCH }}-openwrt-cache-
+
 
     - name: Update & Install feeds
       run: |
         cd openwrt
         ./scripts/feeds update -a
         ./scripts/feeds install -a
+
 
     - name: Load custom configuration
       run: |
